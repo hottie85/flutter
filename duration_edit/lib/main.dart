@@ -10,6 +10,17 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Dauer Edit',
       home: MyHomePage(title: 'Dauer Edit'),
+      theme: ThemeData(
+        brightness: Brightness.dark,
+        textTheme: TextTheme(
+          button: TextStyle(color: Colors.white),
+        ),
+        accentColor: Colors.white,
+        buttonColor: Color.fromRGBO(28, 50, 128, 1.0),
+        inputDecorationTheme: InputDecorationTheme(
+          labelStyle: TextStyle(color: Colors.grey),
+        ),
+      ),
     );
   }
 }
@@ -27,13 +38,10 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
       body: new Container(
         padding: new EdgeInsets.all(32.0),
-        child: new DurationButtons(),
-        ), 
-      );
+        child: new DurationButtons(date: DateTime.now()),
+      ),
+    );
   }
 }
