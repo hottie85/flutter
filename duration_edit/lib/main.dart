@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:duration_edit/duration_buttons.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 
 void main() => runApp(MyApp());
 
@@ -8,6 +9,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
+      supportedLocales: [
+        const Locale('de', 'DE'),
+        // ...
+      ],
       title: 'Dauer Edit',
       home: MyHomePage(title: 'Dauer Edit'),
       theme: ThemeData(
