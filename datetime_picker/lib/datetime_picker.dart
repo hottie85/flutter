@@ -34,7 +34,7 @@ class _DateTimePickerState extends State<DateTimePicker> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      child: Text(DateFormat('dd.MM.yyyy hh:mm').format(_dateTime)),
+      child: Text(DateFormat('dd.MM.yyyy HH:mm').format(_dateTime)),
       onLongPress: () async {
         DateTime _selectedDate = await showDatePicker(
           context: context,
