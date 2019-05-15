@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 
 class TimePicker extends StatefulWidget {
   @override
@@ -11,26 +12,16 @@ class TimePicker extends StatefulWidget {
 }
 
 class _TimePickerState extends State<TimePicker> {
-  TimeOfDay _time = new TimeOfDay.now();
+  DateTime _time = DateTime.now();
 
   Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay _picked = await showTimePicker(
-      context: context,
-      initialTime: _time,
-      builder: (BuildContext context, Widget child) {
-        return MediaQuery(
-          data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-          child: child,
-        );
-      },
-      locale: const Locale('de'),
-    );
-
-    if ((_picked != null) && (_picked != _time)) {
+    DatePicker.showTimePicker(context, 
+    
+    onConfirm: (time) {
       setState(() {
-        _time = _picked;
+       _time = time; 
       });
-    }
+    });
   }
 
   @override

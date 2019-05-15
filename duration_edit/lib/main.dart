@@ -10,7 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Dauer Edit',
       home: MyHomePage(title: 'Dauer Edit'),
-      theme: ThemeData(
+      /*theme: ThemeData(
         brightness: Brightness.dark,
         textTheme: TextTheme(
           button: TextStyle(color: Colors.white),
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
         inputDecorationTheme: InputDecorationTheme(
           labelStyle: TextStyle(color: Colors.grey),
         ),
-      ),
+    ), */
     );
   }
 }
@@ -37,10 +37,11 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
+    DateTime _now = DateTime.now();
     return Scaffold(
       body: new Container(
         padding: new EdgeInsets.all(32.0),
-        child: new DurationButtons(date: DateTime.now()),
+        child: new DurationButtons(date: DateTime(_now.year, _now.month, _now.day, _now.hour, _now.minute)),
       ),
     );
   }

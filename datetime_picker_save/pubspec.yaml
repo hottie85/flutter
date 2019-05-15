@@ -26,6 +26,9 @@ dependencies:
 
   intl: ^0.15.7
 
+  flutter_cupertino_date_picker: ^0.8.0
+  flutter_datetime_picker: ^1.2.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

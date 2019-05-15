@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:duration_edit/duration_button.dart';
 import 'package:flutter_duration_picker/flutter_duration_picker.dart';
+import 'package:flutter_cupertino_date_picker/flutter_cupertino_date_picker.dart';
+// import 'package:flutter_date_picker/flutter_time_picker.dart';
 
 import 'package:intl/intl.dart';
 
@@ -17,9 +19,8 @@ class DurationButtons extends StatefulWidget {
 
 class _DurationButtonsState extends State<DurationButtons> {
   final DateTime date;
-
-  DateTime _endDate = new DateTime.now();
-
+  DateTime _startDate;
+  DateTime _endDate;
   int _durationHour = 0;
   int _durationMinute = 0;
 
@@ -33,8 +34,15 @@ class _DurationButtonsState extends State<DurationButtons> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             Text('Beginn'),
-            Text(new DateFormat("dd.MM.yyyy HH:mm").format(date))
+            Text(new DateFormat("dd.MM.yyyy HH:mm").format(_startDate))
           ],
+        ),
+        Container(
+          height: 10.0,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[Text('Ende'), _endText()],
         ),
         Container(
           height: 10.0,
@@ -42,16 +50,6 @@ class _DurationButtonsState extends State<DurationButtons> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[Text('Dauer'), Text(_getDurationText())],
-        ),
-        Container(
-          height: 10.0,
-        ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[
-            Text('Ende'),
-            Text(new DateFormat("dd.MM.yyyy HH:mm").format(_endDate))
-          ],
         ),
         Container(
           height: 20.0,
@@ -71,9 +69,12 @@ class _DurationButtonsState extends State<DurationButtons> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            DurationMinuteButton(15, _durationMinutePressed, _durationMinute == 15),
-            DurationMinuteButton(30, _durationMinutePressed, _durationMinute == 30),
-            DurationMinuteButton(45, _durationMinutePressed, _durationMinute == 45),
+            DurationMinuteButton(
+                15, _durationMinutePressed, _durationMinute == 15),
+            DurationMinuteButton(
+                30, _durationMinutePressed, _durationMinute == 30),
+            DurationMinuteButton(
+                45, _durationMinutePressed, _durationMinute == 45),
             DurationOtherButton(_durationOtherPressed),
           ],
         ),
@@ -84,7 +85,10 @@ class _DurationButtonsState extends State<DurationButtons> {
   @override
   initState() {
     super.initState();
-    _endDate = this.date;
+    _startDate = this.date;
+    _endDate = this.date.add(Duration(hours: 2));
+    _durationHour = 2;
+    _durationMinute = 0;
   }
 
   _durationHourPressed(int duration) {
@@ -141,5 +145,25 @@ class _DurationButtonsState extends State<DurationButtons> {
       if (_durationMinute > 1) result = result + 'n';
     }
     return result;
+  }
+
+  Widget _endText() {
+    return GestureDetector(
+      child: new Text(new DateFormat("dd.MM.yyyy HH:mm").format(_endDate)),
+      onTap: () {
+        DatePicker.showDatePicker(context, 
+        locale: 'de',
+        dateFormat: 'dd-mm-yyyy',
+        initialDateTime: _endDate,
+        minDateTime: _startDate,
+        cancel: Icon(Icons.cancel),
+        confirm: Icon(Icons.check),
+        onConfirm2: (datetime, list) {
+          setState(() {
+            _endDate = datetime;
+          });
+        });
+      },
+    );
   }
 }
