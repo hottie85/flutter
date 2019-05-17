@@ -41,7 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: Center(
         child: DateTimePicker(
-          firstDate: DateTime(_dateTime.year, _dateTime.month, _dateTime.day),
+          firstDate:
+              DateTime(_dateTime.year, _dateTime.month - 1, _dateTime.day),
           initialDate: DateTime.now(),
           lastDate: new DateTime(3000),
           onDateTimeChanged: (DateTime value) {
