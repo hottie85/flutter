@@ -23,13 +23,8 @@ class _DateTimePickerState extends State<DateTimePicker> {
   DateTime _dateTime;
 
   @override
-  void initState() {
-    _dateTime = widget.initialDate;
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    _dateTime = widget.initialDate;
     return Row(
       children: <Widget>[
         GestureDetector(

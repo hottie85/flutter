@@ -25,7 +25,6 @@ class _DurationButtonsState extends State<DurationButtons> {
 
   @override
   Widget build(BuildContext context) {
-    print('Build: $_endDate');
     return Column(
       children: <Widget>[
         Row(
@@ -39,7 +38,7 @@ class _DurationButtonsState extends State<DurationButtons> {
               onDateTimeChanged: (dateTime) {
                 setState(() {
                   _startDate = dateTime;
-                  _calcDuration();
+                  //_calcDuration();
                   _setEndDate();
                 });
               },
