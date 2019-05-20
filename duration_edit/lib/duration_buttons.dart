@@ -38,7 +38,6 @@ class _DurationButtonsState extends State<DurationButtons> {
               onDateTimeChanged: (dateTime) {
                 setState(() {
                   _startDate = dateTime;
-                  //_calcDuration();
                   _setEndDate();
                 });
               },
