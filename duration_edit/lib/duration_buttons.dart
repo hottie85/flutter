@@ -62,6 +62,7 @@ class _DurationButtonsState extends State<DurationButtons> {
               lastDate: DateTime(3000, 1, 1),
               onDateTimeChanged: (dateTime) {
                 setState(() {
+                  if (dateTime.compareTo(_startDate) < 0) _startDate = dateTime;
                   _endDate = dateTime;
                   _calcDuration();
                 });

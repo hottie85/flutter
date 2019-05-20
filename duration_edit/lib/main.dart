@@ -47,7 +47,7 @@ class _MyHomePageState extends State<MyHomePage> {
         padding: new EdgeInsets.all(32.0),
         child: new DurationButtons(
             date: DateTime(
-                _now.year, _now.month, _now.day, _now.hour, _now.minute)),
+                _now.year, _now.month, _now.day, _now.hour - 2, _now.minute)),
       ),
     );
   }
