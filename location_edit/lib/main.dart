@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:location_edit/location_edit.dart';
 
 void main() => runApp(MyApp());
 
@@ -33,7 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: Text('Location Edit'),
+        child: LocationEdit(),
       ),
     );
   }
