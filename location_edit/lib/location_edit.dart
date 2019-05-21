@@ -6,13 +6,32 @@ class LocationEdit extends StatefulWidget {
 }
 
 class LocationEditState extends State<LocationEdit> {
+  TextEditingController textController = TextEditingController();
+
+  @override
+  void initState() {
+    textController.text = '';
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(32.0),
+    return new Container(
+      padding: new EdgeInsets.all(32.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[Text('Ort'), Text('Ort wählen ...')],
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text('Ort'),
+          new Flexible(
+            child: TextField(
+              controller: textController,
+              textAlign: TextAlign.right,
+              decoration: new InputDecoration.collapsed(
+                hintText: 'Ort eingeben',
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
