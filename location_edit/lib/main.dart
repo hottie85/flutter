@@ -27,6 +27,8 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  String _location = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,8 +36,10 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: LocationEdit((location) {
-          print('LocationSumitted: $location');
+        child: LocationEdit(_location, (location) {
+          setState(() {
+            _location = location;
+          });
         }),
       ),
     );
