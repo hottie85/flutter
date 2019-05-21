@@ -7,5 +7,13 @@ class LocationEdit extends StatefulWidget {
 
 class LocationEditState extends State<LocationEdit> {
   @override
-  Widget build(BuildContext context) => Text('LocationEdit');
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(32.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[Text('Ort'), Text('Ort wählen ...')],
+      ),
+    );
+  }
 }
