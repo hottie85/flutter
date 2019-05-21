@@ -34,7 +34,9 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
       ),
       body: Center(
-        child: LocationEdit(),
+        child: LocationEdit((location) {
+          print('LocationSumitted: $location');
+        }),
       ),
     );
   }

@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
 
 class LocationEdit extends StatefulWidget {
+  final LocationSubmitted _onLocationSubmitted;
+
+  LocationEdit(this._onLocationSubmitted);
+
   @override
-  State<StatefulWidget> createState() => LocationEditState();
+  State<StatefulWidget> createState() =>
+      LocationEditState(_onLocationSubmitted);
 }
 
 class LocationEditState extends State<LocationEdit> {
   TextEditingController textController = TextEditingController();
+
+  LocationSubmitted _onLocationSubmitted;
+
+  LocationEditState(this._onLocationSubmitted);
 
   @override
   void initState() {
@@ -29,6 +38,9 @@ class LocationEditState extends State<LocationEdit> {
               decoration: new InputDecoration.collapsed(
                 hintText: 'Ort eingeben',
               ),
+              onSubmitted: (text) {
+                _onLocationSubmitted(text);
+              },
             ),
           ),
         ],
@@ -36,3 +48,5 @@ class LocationEditState extends State<LocationEdit> {
     );
   }
 }
+
+typedef void LocationSubmitted(String location);
