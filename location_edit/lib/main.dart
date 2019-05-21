@@ -32,7 +32,9 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         title: Text(widget.title),
       ),
-      body: Text('Location Edit'),
+      body: Center(
+        child: Text('Location Edit'),
+      ),
     );
   }
 }
