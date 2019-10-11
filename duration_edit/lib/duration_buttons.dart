@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:duration_edit/duration_button.dart';
-import 'package:flutter_duration_picker/flutter_duration_picker.dart';
+
 import 'package:duration_edit/datetime_picker.dart';
+
+import 'flutter_duration_picker.dart';
 
 class DurationButtons extends StatefulWidget {
   final DateTime date;

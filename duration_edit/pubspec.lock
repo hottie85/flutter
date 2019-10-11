@@ -42,26 +42,19 @@ packages:
       name: flare_dart
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.4.0"
+    version: "1.4.9"
   flare_flutter:
     dependency: transitive
     description:
       name: flare_flutter
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "1.5.0"
+    version: "1.5.13"
   flutter:
     dependency: "direct main"
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_duration_picker:
-    dependency: "direct main"
-    description:
-      name: flutter_duration_picker
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.0.4"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -120,7 +113,7 @@ packages:
       name: selectable_circle
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.1.0"
+    version: "0.1.6+3"
   sky_engine:
     dependency: transitive
     description: flutter
@@ -183,5 +176,5 @@ packages:
     source: hosted
     version: "2.0.8"
 sdks:
-  dart: ">=2.2.2 <3.0.0"
-  flutter: ">=0.1.4 <2.0.0"
+  dart: ">=2.3.0-dev.0.1 <3.0.0"
+  flutter: ">=1.7.8+hotfix.3"

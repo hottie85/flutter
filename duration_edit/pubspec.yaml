@@ -27,9 +27,7 @@ dependencies:
 
   intl: ^0.15.7
 
-  flutter_duration_picker: ^1.0.4
-
-  selectable_circle: ^0.1.0
+  selectable_circle: ^0.1.6+3
 
 dev_dependencies:
   flutter_test:

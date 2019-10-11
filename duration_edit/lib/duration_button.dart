@@ -12,8 +12,13 @@ class DurationHourButton extends DurationButton {
 }
 
 class DurationMinuteButton extends DurationButton {
-  DurationMinuteButton(int value, DurationCallback onDurationCallback, bool selected)
-      : super(value: value, unit: "'", onDurationCallback: onDurationCallback, selected: selected);
+  DurationMinuteButton(
+      int value, DurationCallback onDurationCallback, bool selected)
+      : super(
+            value: value,
+            unit: "'",
+            onDurationCallback: onDurationCallback,
+            selected: selected);
 }
 
 class DurationOtherButton extends DurationButton {
@@ -36,7 +41,6 @@ class DurationButton extends StatefulWidget {
 }
 
 class _DurationButtonState extends State<DurationButton> {
-
   String caption() {
     if (widget.value != null)
       return widget.value.toString() + widget.unit;
@@ -54,7 +58,7 @@ class _DurationButtonState extends State<DurationButton> {
       width: 70,
       child: Text(caption()),
       isSelected: widget.selected,
-      onSelected: () {
+      onTap: () {
         _buttonPressed(widget.value);
       },
     );
