@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:duration_edit/duration_button.dart';
+import 'package:intl/intl.dart';
 
 import 'flutter_duration_picker.dart';
 
@@ -102,15 +103,15 @@ class _DurationButtonsState extends State<DurationButtons> {
 
   String _getDurationText() {
     String result = '';
-    if (_durationHour > 0) {
-      result = _durationHour.toString() + ' Stunde';
-      if (_durationHour > 1) result = result + 'n';
-    }
-    if (_durationMinute > 0) {
-      if (result != '') result = result + ' ';
-      result = result + _durationMinute.toString() + ' Minute';
-      if (_durationMinute > 1) result = result + 'n';
-    }
+    result = Intl.plural(_durationHour,
+        zero: '',
+        one: '$_durationHour Stunde',
+        other: '$_durationHour Stunden');
+
+    result += Intl.plural(_durationMinute,
+        zero: '',
+        one: ' $_durationMinute Minute',
+        other: ' $_durationMinute Minuten');
     return result;
   }
 }
