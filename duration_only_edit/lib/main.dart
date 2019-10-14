@@ -46,6 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: new Container(
         padding: new EdgeInsets.all(32.0),
         child: new DurationButtons(
+            onTap: print,
             date: DateTime(
                 _now.year, _now.month, _now.day, _now.hour - 2, _now.minute)),
       ),

@@ -7,7 +7,10 @@ import 'flutter_duration_picker.dart';
 class DurationButtons extends StatefulWidget {
   final DateTime date;
 
-  DurationButtons({Key key, @required this.date}) : super(key: key);
+  /// this is called, when the duration has changed
+  final Function(int minutes) onTap;
+
+  DurationButtons({Key key, @required this.date, this.onTap}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -69,19 +72,17 @@ class _DurationButtonsState extends State<DurationButtons> {
   }
 
   _durationHourPressed(int duration) {
-    setState(() {
-      (_durationHour == duration)
-          ? _durationHour = 0
-          : _durationHour = duration;
-    });
+    final hour = (_durationHour == duration)
+        ? _durationHour = 0
+        : _durationHour = duration;
+    setHourAndMinute(hour, _durationMinute);
   }
 
   _durationMinutePressed(int duration) {
-    setState(() {
-      (_durationMinute == duration)
-          ? _durationMinute = 0
-          : _durationMinute = duration;
-    });
+    final minute = (_durationMinute == duration)
+        ? _durationMinute = 0
+        : _durationMinute = duration;
+    setHourAndMinute(_durationHour, minute);
   }
 
   _durationOtherPressed(int duration) async {
@@ -91,13 +92,8 @@ class _DurationButtonsState extends State<DurationButtons> {
       initialTime: Duration(minutes: _durationMinute, hours: _durationHour),
     );
     if (resultingDuration != null) {
-      setState(() {
-        _durationHour = resultingDuration.inHours;
-        _durationMinute = resultingDuration.inMinutes;
-
-        if (_durationHour > 0)
-          _durationMinute = _durationMinute % (_durationHour * 60);
-      });
+      setHourAndMinute(
+          resultingDuration.inHours, resultingDuration.inMinutes % 60);
     }
   }
 
@@ -113,5 +109,21 @@ class _DurationButtonsState extends State<DurationButtons> {
         one: ' $_durationMinute Minute',
         other: ' $_durationMinute Minuten');
     return result;
+  }
+
+  void doOnTap() {
+    if (widget.onTap == null) {
+      return;
+    }
+
+    widget.onTap(_durationHour * 60 + _durationMinute);
+  }
+
+  void setHourAndMinute(int hour, int minute) {
+    setState(() {
+      _durationHour = hour;
+      _durationMinute = minute;
+    });
+    doOnTap();
   }
 }
