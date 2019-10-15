@@ -31,6 +31,7 @@ class _DateTimePickerState extends State<DateTimePicker> {
   @override
   Widget build(BuildContext context) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
         GestureDetector(
           child: Text(DateFormat('dd.MM.yyyy').format(_dateTime)),
