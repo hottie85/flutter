@@ -34,6 +34,7 @@ class _DialPainter extends CustomPainter {
     @required this.selectedValue,
     @required this.pct,
     @required this.multiplier,
+    @required this.dragging,
   });
 
   final List<TextPainter> labels;
@@ -43,6 +44,7 @@ class _DialPainter extends CustomPainter {
   final TextDirection textDirection;
   final int selectedValue;
   final BuildContext context;
+  final bool dragging;
 
   final double pct;
   final int multiplier;
@@ -63,8 +65,19 @@ class _DialPainter extends CustomPainter {
     canvas.drawCircle(
         centerPoint, radius, new Paint()..color = backgroundColor);
 
+    final minval = (pctTheta * 60);
+    int minutes = minval.round();
+    var multi = multiplier;
+    // kind of hacky correction of the hour
+    if (minutes == 60 &&
+        (dragging || !dragging && minval < 60) &&
+        multiplier < 3) {
+      multi++;
+    }
+    minutes = minutes == 60 ? 0 : minutes;
+
     // Draw a translucent circle for every hour
-    for (int i = 0; i < multiplier; i = i + 1) {
+    for (int i = 0; i < multi; i = i + 1) {
       canvas.drawCircle(centerPoint, radius,
           new Paint()..color = accentColor.withOpacity((i == 0) ? 0.3 : 0.1));
     }
@@ -85,13 +98,12 @@ class _DialPainter extends CustomPainter {
     canvas.drawCircle(handlePoint, 20.0, handlePaint);
 
     // Draw the Text in the center of the circle which displays hours and mins
-    String hours = (multiplier == 0) ? '' : "${multiplier}h ";
-    int minutes = (pctTheta * 60).round();
-    minutes = minutes == 60 ? 0 : minutes;
+    String hours = (multi == 0) ? '' : "${multi}h ";
+
     TextPainter textDurationValuePainter = new TextPainter(
         textAlign: TextAlign.center,
         text: new TextSpan(
-            text: '$hours${minutes > 0 ? minutes : ""}',
+            text: '$hours${minutes > 0 || hours.isEmpty ? minutes : ""}',
             style: Theme.of(context)
                 .textTheme
                 .display3
@@ -103,20 +115,22 @@ class _DialPainter extends CustomPainter {
         centerPoint.dy - textDurationValuePainter.height / 2);
     textDurationValuePainter.paint(canvas, middleForValueText);
 
-    TextPainter textMinPainter = new TextPainter(
-        textAlign: TextAlign.center,
-        text: new TextSpan(
-            text: 'min.', //th: ${theta}',
-            style: Theme.of(context).textTheme.body1),
-        textDirection: TextDirection.ltr)
-      ..layout();
-    textMinPainter.paint(
-        canvas,
-        new Offset(
-            centerPoint.dx - (textMinPainter.width / 2),
-            centerPoint.dy +
-                (textDurationValuePainter.height / 2) -
-                textMinPainter.height / 2));
+    if (hours.isEmpty || minutes > 0) {
+      TextPainter textMinPainter = new TextPainter(
+          textAlign: TextAlign.center,
+          text: new TextSpan(
+              text: 'min.', //th: ${theta}',
+              style: Theme.of(context).textTheme.body1),
+          textDirection: TextDirection.ltr)
+        ..layout();
+      textMinPainter.paint(
+          canvas,
+          new Offset(
+              centerPoint.dx - (textMinPainter.width / 2),
+              centerPoint.dy +
+                  (textDurationValuePainter.height / 2) -
+                  textMinPainter.height / 2));
+    }
 
     // Draw an arc around the circle for the amount of the circle that has elapsed.
     var elapsedPainter = new Paint()
@@ -183,6 +197,8 @@ class _Dial extends StatefulWidget {
 }
 
 class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
+  bool _startDragMinWas0;
+
   @override
   void initState() {
     super.initState();
@@ -276,8 +292,10 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
 
   Duration _notifyOnChangedIfNeeded() {
     final Duration current = _getTimeForTheta(_theta.value);
-    print(current);
-    var d = Duration(hours: _hours, minutes: current.inMinutes % 60);
+    print("$_hours ${current.inMinutes}");
+    var d = Duration(
+        hours: (current.inMinutes ~/ 60), minutes: current.inMinutes % 60);
+    print("$d $_hours ${current.inMinutes}");
     widget.onChanged(d);
 
     return d;
@@ -308,6 +326,10 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
   void _handlePanStart(DragStartDetails details) {
     assert(!_dragging);
     _dragging = true;
+    double pctTheta = (0.25 - (_theta.value % _kTwoPi) / _kTwoPi) % 1.0;
+    int minutes = (pctTheta * 60).round();
+    minutes = minutes == 60 ? 0 : minutes;
+    _startDragMinWas0 = minutes == 0;
     final RenderBox box = context.findRenderObject();
     _position = box.globalToLocal(details.globalPosition);
     _center = box.size.center(Offset.zero);
@@ -319,6 +341,7 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
   void _handlePanUpdate(DragUpdateDetails details) {
     double oldTheta = _theta.value;
     _position += details.delta;
+
     _updateThetaForPan();
     double newTheta = _theta.value;
 
@@ -329,6 +352,10 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
 
   void _updateRotations(double oldTheta, double newTheta) {
     // If the angle crosses clockwise through 12'o'clock
+    if (_startDragMinWas0) {
+      oldTheta = _kCircleTop - 0.00000001;
+      _startDragMinWas0 = false;
+    }
     if (oldTheta > _kCircleTop &&
         newTheta <= _kCircleTop &&
         oldTheta < _kCircleLeft) {
@@ -418,16 +445,16 @@ class _DialState extends State<_Dial> with SingleTickerProviderStateMixin {
         onTapUp: _handleTapUp,
         child: new CustomPaint(
           painter: new _DialPainter(
-            pct: _pct,
-            multiplier: _hours,
-            context: context,
-            selectedValue: selectedDialValue,
-            labels: _buildMinutes(theme.textTheme),
-            backgroundColor: backgroundColor,
-            accentColor: themeData.accentColor,
-            theta: _theta.value,
-            textDirection: Directionality.of(context),
-          ),
+              pct: _pct,
+              multiplier: _hours,
+              context: context,
+              selectedValue: selectedDialValue,
+              labels: _buildMinutes(theme.textTheme),
+              backgroundColor: backgroundColor,
+              accentColor: themeData.accentColor,
+              theta: _theta.value,
+              textDirection: Directionality.of(context),
+              dragging: _dragging),
         ));
   }
 }
