@@ -12,6 +12,8 @@ class _LocationNameState extends State<LocationName> {
   Position _currentPosition;
   String _currentAddress;
 
+  TextEditingController _textController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -20,10 +22,11 @@ class _LocationNameState extends State<LocationName> {
 
   @override
   Widget build(BuildContext context) {
-    if ((_currentPosition != null) && (_currentAddress != null))
-      return Text(_currentAddress);
-    else
-      return Text('');
+    if ((_currentPosition != null) && (_currentAddress != null)) {
+      _textController.text = _currentAddress;
+    } else
+      _textController.text = '';
+    return TextField(controller: _textController);
   }
 
   _getCurrentLocation() {
