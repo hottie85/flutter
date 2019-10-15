@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+/// Textfield that initializes with the location if possible
 class LocationName extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _LocationNameState();
@@ -12,7 +13,7 @@ class _LocationNameState extends State<LocationName> {
   Position _currentPosition;
   String _currentAddress;
 
-  TextEditingController _textController = TextEditingController();
+  final TextEditingController _textController = TextEditingController();
 
   @override
   void initState() {
@@ -24,15 +25,16 @@ class _LocationNameState extends State<LocationName> {
   Widget build(BuildContext context) {
     if ((_currentPosition != null) && (_currentAddress != null)) {
       _textController.text = _currentAddress;
-    } else
+    } else {
       _textController.text = '';
+    }
     return TextField(controller: _textController);
   }
 
   _getCurrentLocation() {
     geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((Position position) {
+        .then((position) {
       setState(() {
         _currentPosition = position;
       });
@@ -44,10 +46,10 @@ class _LocationNameState extends State<LocationName> {
 
   _getAddressFromLatLng() async {
     try {
-      List<Placemark> p = await geolocator.placemarkFromCoordinates(
+      var p = await geolocator.placemarkFromCoordinates(
           _currentPosition.latitude, _currentPosition.longitude);
 
-      Placemark place = p[0];
+      var place = p[0];
 
       setState(() {
         _currentAddress = place.locality;
