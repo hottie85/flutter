@@ -21,10 +21,13 @@ class DateTimePicker extends StatefulWidget {
 
 class _DateTimePickerState extends State<DateTimePicker> {
   DateTime _dateTime;
+  final int _minuteSteps = 5;
 
   @override
   void initState() {
     _dateTime = widget.initialDate;
+    while ((_dateTime.minute % _minuteSteps) != 0)
+      _dateTime = _dateTime.subtract(new Duration(minutes: 1));
     super.initState();
   }
 
