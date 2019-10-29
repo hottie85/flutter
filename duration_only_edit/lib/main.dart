@@ -41,14 +41,15 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    DateTime _now = DateTime.now();
+    DateTime _now = DateTime(0, 0, 0).add(Duration(hours: 2, minutes: 15));
+
     return Scaffold(
       body: new Container(
         padding: new EdgeInsets.all(32.0),
         child: new DurationButtons(
-            onTap: print,
-            date: DateTime(
-                _now.year, _now.month, _now.day, _now.hour - 2, _now.minute)),
+          onTap: print,
+          initialDate: _now,
+        ),
       ),
     );
   }

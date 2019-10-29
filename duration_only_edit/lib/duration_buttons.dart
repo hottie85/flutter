@@ -1,29 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:duration_edit/duration_button.dart';
 import 'package:intl/intl.dart';
 
+import 'duration_button.dart';
 import 'flutter_duration_picker.dart';
 
+/// shows 8 circles to chose a duration
+///
+/// between 0:15 and 4:45, there are fast buttons for every 15 min step
+/// if you need an other duration you can choose from the ? circle
 class DurationButtons extends StatefulWidget {
-  final DateTime date;
+  /// initial time of the duration.
+  ///  only the time portion of this DateTime is relevant.
+  final DateTime initialDate;
 
   /// this is called, when the duration has changed
   final Function(int minutes) onTap;
 
-  DurationButtons({Key key, @required this.date, this.onTap}) : super(key: key);
+  /// creates the widget
+  DurationButtons({Key key, @required this.initialDate, this.onTap})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
-    return _DurationButtonsState(date: date);
+    return _DurationButtonsState(initialDate: initialDate);
   }
 }
 
 class _DurationButtonsState extends State<DurationButtons> {
-  final DateTime date;
+  final DateTime initialDate;
   int _durationHour = 0;
   int _durationMinute = 0;
 
-  _DurationButtonsState({@required this.date}) : super();
+  _DurationButtonsState({@required this.initialDate}) : super();
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +73,10 @@ class _DurationButtonsState extends State<DurationButtons> {
   }
 
   @override
-  initState() {
+  void initState() {
     super.initState();
-    _durationHour = 2;
-    _durationMinute = 0;
+    _durationHour = initialDate == null ? 2 : initialDate.hour;
+    _durationMinute = initialDate == null ? 0 : initialDate.minute;
   }
 
   _durationHourPressed(int duration) {
@@ -86,7 +94,7 @@ class _DurationButtonsState extends State<DurationButtons> {
   }
 
   _durationOtherPressed(int duration) async {
-    Duration resultingDuration = await showDurationPicker(
+    final resultingDuration = await showDurationPicker(
       snapToMins: 5,
       context: context,
       initialTime: Duration(minutes: _durationMinute, hours: _durationHour),
@@ -98,7 +106,7 @@ class _DurationButtonsState extends State<DurationButtons> {
   }
 
   String _getDurationText() {
-    String result = '';
+    var result = '';
     result = Intl.plural(_durationHour,
         zero: '',
         one: '$_durationHour Stunde',
