@@ -2,58 +2,46 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 /// Textfield that initializes with the location if possible
-class LocationName extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _LocationNameState();
-}
+///
+/// It does not check Location if a InitialValue is given
+class LocationName extends StatelessWidget {
+  final String initialValue;
+  final ValueChanged<String> onChanged;
 
-class _LocationNameState extends State<LocationName> {
-  final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+  LocationName(this.initialValue, this.onChanged) {
+    if (initialValue.isEmpty) {
+      _getCurrentLocation();
+    } else {
+      _textController.text = initialValue;
+    }
+  }
 
-  Position _currentPosition;
-  String _currentAddress;
-
+  final Geolocator _geolocator = Geolocator()..forceAndroidLocationManager;
   final TextEditingController _textController = TextEditingController();
 
   @override
-  void initState() {
-    super.initState();
-    _getCurrentLocation();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    if ((_currentPosition != null) && (_currentAddress != null)) {
-      _textController.text = _currentAddress;
-    } else {
-      _textController.text = '';
-    }
-    return TextField(controller: _textController);
+    return TextField(
+      controller: _textController,
+      onChanged: onChanged,
+    );
   }
 
   _getCurrentLocation() {
-    geolocator
+    _geolocator
         .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then((position) {
-      setState(() {
-        _currentPosition = position;
-      });
-      _getAddressFromLatLng();
+        .then((pos) {
+      _getAddressFromLatLng(pos);
     }).catchError((e) {
       print(e);
     });
   }
 
-  _getAddressFromLatLng() async {
+  _getAddressFromLatLng(Position pos) async {
     try {
-      var p = await geolocator.placemarkFromCoordinates(
-          _currentPosition.latitude, _currentPosition.longitude);
-
-      var place = p[0];
-
-      setState(() {
-        _currentAddress = place.locality;
-      });
+      final p = await _geolocator.placemarkFromCoordinates(
+          pos.latitude, pos.longitude);
+      _textController.text = p[0].locality;
     } catch (e) {
       print(e);
     }
