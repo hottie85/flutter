@@ -34,8 +34,13 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            LocationName("", print),
-            LocationName("HS 23", print),
+            LocationName(),
+            LocationName(
+              initialValue: "HS 23",
+              onChanged: print,
+              decoration:
+                  InputDecoration(border: InputBorder.none, hintText: "Ort"),
+            ),
           ],
         ),
       ),

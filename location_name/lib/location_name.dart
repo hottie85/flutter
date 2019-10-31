@@ -12,11 +12,22 @@ class LocationName extends StatelessWidget {
   /// onChanged of the Textfield
   final ValueChanged<String> onChanged;
 
+  /// decoration of the Textfield
+  final InputDecoration decoration;
+
+  /// this is displayed while loading the location
+  ///
+  /// default a CircularProgressIndicator is shown
+  final Widget loadingIndicator;
+
   /// creates the widget
-  LocationName(this.initialValue, this.onChanged) {
-    if (initialValue.isEmpty) {
-      _getCurrentLocation();
-    } else {
+  LocationName({
+    this.initialValue,
+    this.onChanged,
+    this.decoration = const InputDecoration(),
+    this.loadingIndicator = const CircularProgressIndicator(),
+  }) {
+    if (initialValue != null && initialValue.isNotEmpty) {
       _textController.text = initialValue;
     }
   }
@@ -26,26 +37,34 @@ class LocationName extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
-      controller: _textController,
-      onChanged: onChanged,
+    if (_textController.text.isNotEmpty) return _buildTextField();
+    return FutureBuilder<String>(
+      future: _getLocality(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          _textController.text = snapshot.data;
+          return _buildTextField();
+        } else if (snapshot.hasError) {
+          return _buildTextField();
+        }
+        // By default, show a loading spinner
+        return loadingIndicator;
+      },
     );
   }
 
-  _getCurrentLocation() {
-    _geolocator
-        .getCurrentPosition(desiredAccuracy: LocationAccuracy.best)
-        .then(_getAddressFromLatLng)
-        .catchError(print);
+  Future<String> _getLocality() async {
+    final pos = await _geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.best);
+    final p = await _geolocator.placemarkFromPosition(pos);
+    return p[0].locality;
   }
 
-  _getAddressFromLatLng(Position pos) async {
-    try {
-      final p = await _geolocator.placemarkFromCoordinates(
-          pos.latitude, pos.longitude);
-      _textController.text = p[0].locality;
-    } on Exception catch (e) {
-      print(e);
-    }
+  Widget _buildTextField() {
+    return TextField(
+      controller: _textController,
+      onChanged: onChanged,
+      decoration: decoration,
+    );
   }
 }
