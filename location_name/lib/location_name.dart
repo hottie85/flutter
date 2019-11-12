@@ -69,7 +69,7 @@ class LocationName extends StatelessWidget {
     return StreamBuilder(
       stream: _showLoadingStream,
       initialData: true,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
+      builder: (context, snapshot) {
         if (snapshot.hasData && !snapshot.hasError) {
           if (snapshot.data) {
             return loadingIndicator ??
@@ -92,7 +92,7 @@ class LocationName extends StatelessWidget {
     final wList = <Widget>[];
     wList.add(TextField(
       controller: _textController,
-      onChanged: onTextChanged,
+      onChanged: _onTextChanged,
       decoration: decoration,
     ));
 
@@ -108,14 +108,14 @@ class LocationName extends StatelessWidget {
     return StreamBuilder(
       stream: _showCancelStream,
       initialData: loading || _textController.text.isNotEmpty,
-      builder: (BuildContext context, AsyncSnapshot snapshot) {
+      builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data) {
           return Container(
             height: 40,
             child: Align(
               alignment: Alignment.centerRight,
               child:
-                  GestureDetector(child: Icon(Icons.cancel), onTap: onCancel),
+                  GestureDetector(child: Icon(Icons.cancel), onTap: _onCancel),
             ),
             // constraints: BoxConstraints.expand(),
           );
@@ -125,7 +125,7 @@ class LocationName extends StatelessWidget {
     );
   }
 
-  onTextChanged(String text) {
+  _onTextChanged(String text) {
     _disableShowLoading();
     if (_showCancelSubject.value == null ||
         _showCancelSubject.value != _textController.text.isNotEmpty) {
@@ -140,7 +140,7 @@ class LocationName extends StatelessWidget {
     }
   }
 
-  void onCancel() {
+  void _onCancel() {
     _textController.text = '';
     _disableShowLoading();
 
