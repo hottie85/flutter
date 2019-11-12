@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:rxdart/rxdart.dart';
 
 /// Textfield that initializes with the location if possible
 ///
@@ -17,7 +18,7 @@ class LocationName extends StatelessWidget {
 
   /// this is displayed while loading the location
   ///
-  /// default a CircularProgressIndicator is shown
+  /// by default a LinearProgressIndicator is shown
   final Widget loadingIndicator;
 
   /// creates the widget
@@ -25,7 +26,7 @@ class LocationName extends StatelessWidget {
     this.initialValue,
     this.onChanged,
     this.decoration = const InputDecoration(),
-    this.loadingIndicator = const CircularProgressIndicator(),
+    this.loadingIndicator,
   }) {
     if (initialValue != null && initialValue.isNotEmpty) {
       _textController.text = initialValue;
@@ -33,22 +34,49 @@ class LocationName extends StatelessWidget {
   }
 
   final Geolocator _geolocator = Geolocator()..forceAndroidLocationManager;
+  final _showCancelSubject = BehaviorSubject<bool>();
+  Stream<bool> get _showCancelStream => _showCancelSubject.stream;
+  final _showLoadingSubject = BehaviorSubject<bool>();
+  Stream<bool> get _showLoadingStream => _showLoadingSubject.stream;
+
   final TextEditingController _textController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    if (_textController.text.isNotEmpty) return _buildTextField();
+    if (_textController.text.isNotEmpty) {
+      return _buildTextField(false);
+    }
     return FutureBuilder<String>(
       future: _getLocality(),
       builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          _textController.text = snapshot.data;
-          return _buildTextField();
-        } else if (snapshot.hasError) {
-          return _buildTextField();
-        }
+        final wList = <Widget>[];
+        wList.add(_buildTextField(!snapshot.hasData && !snapshot.hasError));
+        wList.add(_buildLoadingIndicator());
+
         // By default, show a loading spinner
-        return loadingIndicator;
+        if (snapshot.hasData && _textController.text.isEmpty) {
+          _textController.text = snapshot.data;
+          _showLoadingSubject.add(false);
+        }
+        return Column(
+          children: wList.toList(),
+        );
+      },
+    );
+  }
+
+  StreamBuilder<bool> _buildLoadingIndicator() {
+    return StreamBuilder(
+      stream: _showLoadingStream,
+      initialData: true,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData && !snapshot.hasError) {
+          if (snapshot.data) {
+            return loadingIndicator ??
+                Container(height: 1, child: LinearProgressIndicator());
+          }
+        }
+        return Container();
       },
     );
   }
@@ -60,11 +88,64 @@ class LocationName extends StatelessWidget {
     return p[0].locality;
   }
 
-  Widget _buildTextField() {
-    return TextField(
+  Widget _buildTextField(bool loading) {
+    final wList = <Widget>[];
+    wList.add(TextField(
       controller: _textController,
-      onChanged: onChanged,
+      onChanged: onTextChanged,
       decoration: decoration,
+    ));
+
+    wList.add(
+      _buildCancel(loading),
     );
+    return Stack(
+      children: wList.toList(),
+    );
+  }
+
+  StreamBuilder<bool> _buildCancel(bool loading) {
+    return StreamBuilder(
+      stream: _showCancelStream,
+      initialData: loading || _textController.text.isNotEmpty,
+      builder: (BuildContext context, AsyncSnapshot snapshot) {
+        if (snapshot.hasData && snapshot.data) {
+          return Container(
+            height: 40,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child:
+                  GestureDetector(child: Icon(Icons.cancel), onTap: onCancel),
+            ),
+            // constraints: BoxConstraints.expand(),
+          );
+        }
+        return Container();
+      },
+    );
+  }
+
+  onTextChanged(String text) {
+    _disableShowLoading();
+    if (_showCancelSubject.value == null ||
+        _showCancelSubject.value != _textController.text.isNotEmpty) {
+      _showCancelSubject.add(_textController.text.isNotEmpty);
+    }
+    onChanged(text);
+  }
+
+  void _disableShowLoading() {
+    if (_showLoadingSubject.value ?? true) {
+      _showLoadingSubject.add(false);
+    }
+  }
+
+  void onCancel() {
+    _textController.text = '';
+    _disableShowLoading();
+
+    if (_showCancelSubject.value ?? true) {
+      _showCancelSubject.add(false);
+    }
   }
 }

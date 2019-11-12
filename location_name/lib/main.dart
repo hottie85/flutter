@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'location_name.dart';
+import 'location_name_stream.dart';
 
 void main() => runApp(MyApp());
 
@@ -34,9 +35,11 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            LocationName(),
-            LocationName(
+            LocationNameStream(
               initialValue: "HS 23",
+              onChanged: (x) => print("stream: $x"),
+            ),
+            LocationName(
               onChanged: print,
               decoration:
                   InputDecoration(border: InputBorder.none, hintText: "Ort"),
