@@ -20,6 +20,7 @@ class LocationName extends StatelessWidget {
   ///
   /// by default a LinearProgressIndicator is shown
   final Widget loadingIndicator;
+  final FocusNode _focusNode = FocusNode();
 
   /// creates the widget
   LocationName({
@@ -94,6 +95,7 @@ class LocationName extends StatelessWidget {
       controller: _textController,
       onChanged: _onTextChanged,
       decoration: decoration,
+      focusNode: _focusNode,
     ));
 
     wList.add(
@@ -110,12 +112,11 @@ class LocationName extends StatelessWidget {
       initialData: loading || _textController.text.isNotEmpty,
       builder: (context, snapshot) {
         if (snapshot.hasData && snapshot.data) {
-          return Container(
-            height: 40,
+          return Positioned.fill(
             child: Align(
               alignment: Alignment.centerRight,
-              child:
-                  GestureDetector(child: Icon(Icons.cancel), onTap: _onCancel),
+              child: GestureDetector(
+                  child: Icon(Icons.cancel), onTap: () => _onCancel(context)),
             ),
             // constraints: BoxConstraints.expand(),
           );
@@ -140,12 +141,13 @@ class LocationName extends StatelessWidget {
     }
   }
 
-  void _onCancel() {
+  void _onCancel(BuildContext context) {
     _textController.text = '';
     _disableShowLoading();
 
     if (_showCancelSubject.value ?? true) {
       _showCancelSubject.add(false);
     }
+    FocusScope.of(context).requestFocus(_focusNode);
   }
 }
